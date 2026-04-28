@@ -1,0 +1,7 @@
+venv/
+.venv/
+__pycache__/
+.env
+data/*.wav
+data/*.mp3
+.DS_Store
