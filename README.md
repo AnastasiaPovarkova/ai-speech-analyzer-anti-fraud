@@ -20,22 +20,35 @@
 ### 1. Системные зависимости
 Для работы проекта необходим движок `whisper-cpp` и утилита `ffmpeg`:
 
-```brew install whisper-cpp ffmpeg```
+```bash
+brew install whisper-cpp ffmpeg
+```
 
 ### 2. Загрузка модели
 Для транскрибации используется модель формата GGML. Скачайте её в папку проекта:
 
-```mkdir -p models```
-```curl -L [https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin](https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin) -o models/ggml-base.bin```
+```bash
+mkdir -p models
+curl -L [https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin](https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin) -o models/ggml-base.bin
+```
 
 ### 3. Настройка Python окружения
 # Создание и активация окружения
-```python3 -m venv venv```
-```source venv/bin/activate```
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
 # Установка зависимостей
-```pip install -r requirements.txt```
+```bash
+pip install -r requirements.txt
+```
 
+### 4. Запуск транскрибации
+Для теста распознавания речи используйте:
+```bash
+python3 src/transcriber.py
+```
 
 ## 🏗 Структура проекта
 - `models/`: Файлы моделей Whisper (.bin).
@@ -46,7 +59,8 @@
 ## 📋 Текущий статус
 - [x] Инициализация репозитория и окружения.
 - [x] Настройка системного движка whisper-cpp.
-- [ ] Настройка модуля транскрибации (в процессе).
+- [x] Реализация базового модуля транскрибации.
+- [ ] Предварительная обработка аудио (конвертация форматов).
 - [ ] Реализация детектора ключевых фраз.
 - [ ] Интеграция с LLM для глубокого анализа текста.
 - [ ] Разработка веб-интерфейса.
