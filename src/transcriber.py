@@ -1,52 +1,62 @@
 import subprocess
 import os
+from audio_processor import prepare_audio, remove_silence
 
-def transcribe_audio(audio_path):
+def transcribe_audio(audio_path, language="ru"):
     """
-    Функция-обертка: вызывает системный whisper-cli и забирает текст в Python.
+    Полный цикл: гарантированная подготовка аудио (16kHz, Mono) + распознавание текста.
     """
-    # Путь к скачанной модели
-    model_path = "models/ggml-base.bin"
+    # Путь для временного файла, который будет гарантированно подходить для Whisper
+    processed_path = "data/samples/temp_ready_for_whisper.wav"
     
-    # Имя команды для запуска (можно найти через ls /usr/local/bin)
+    print(f"🔄 Подготовка аудио: приведение к стандарту 16kHz Mono...")
+    # Всегда прогоняем через конвертер для страховки параметров частоты и каналов
+    ready_file = prepare_audio(audio_path, processed_path)
+
+    if not ready_file:
+        return "❌ Ошибка при подготовке аудио файла."
+
+    # Применяем удаление тишины к временному файлу для повышения точности и скорости
+    remove_silence(ready_file)
+
+    # Настройка параметров и запуск Whisper
+    model_path = "models/ggml-base.bin"
     whisper_bin = "whisper-cli"
 
-    if not os.path.exists(audio_path):
-        return f"❌ Файл не найден: {audio_path}"
-
-    # Формируем команду, как если бы мы писали её в терминале
     # -m: модель, -f: файл, --no-timestamps: убираем [00:00.000], чтобы был только текст
     command = [
         whisper_bin,
         "-m", model_path,
-        "-f", audio_path,
+        "-f", ready_file,
         "--no-timestamps",
-        "-l", "en" # Указываем язык явно
+        "-l", language
     ]
 
     try:
-        # Запускаем процесс и ждем завершения
+        # Запускаем распознавание через подпроцесс
         # capture_output=True сохраняет то, что программа вывела в консоль
         result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
+        
+        # Всегда удаляем временный файл, чтобы не засорять папку с образцами
+        if os.path.exists(ready_file):
+            os.remove(ready_file)
 
         if result.returncode == 0:
-            # Если всё прошло успешно, возвращаем чистый текст
             return result.stdout.strip()
         else:
             # Если whisper-cli выдал ошибку (например, не нашел модель)
-            return f"❌ Ошибка движка whisper-cli: {result.stderr}"
+            return f"❌ Ошибка Whisper: {result.stderr}"
 
     except Exception as e:
         # Если сломался сам Python (например, не нашел команду whisper-cli)
-        return f"❌ Системная ошибка: {str(e)}"
+        return f"❌ Ошибка выполнения: {str(e)}"
 
 if __name__ == "__main__":
-    # Указываем путь к скачанному файлу
-    path_to_test = "data/samples/test.wav"
+    my_record = "data/samples/test1.m4a" 
     
-    print("⏳ Начинаю расшифровку... Это может занять несколько секунд.")
-    final_text = transcribe_audio(path_to_test)
+    print(f"⏳ Начинаю расшифровку... Это может занять несколько секунд.")
+    result_text = transcribe_audio(my_record, language="ru")
     
-    print("\n--- РЕЗУЛЬТАТ ---")
-    print(final_text)
+    print("\n--- ИТОГОВЫЙ ТЕКСТ ---")
+    print(result_text)
     print("-----------------")
