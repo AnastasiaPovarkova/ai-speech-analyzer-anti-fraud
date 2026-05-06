@@ -1,4 +1,7 @@
-# Виртуальное окружение
+# Python
+pycache/
+*.py[cod]
+*$py.class
 venv/
 .env
 
