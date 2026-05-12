@@ -1,8 +1,8 @@
 import subprocess
 import os
 import sys
-from audio_processor import prepare_audio, remove_silence
-from ai_analyzer import analyze_speech
+from src.audio_processor import prepare_audio, remove_silence
+from src.ai_analyzer import analyze_speech
 
 def transcribe_audio(audio_path, language="ru"):
     """
@@ -92,7 +92,7 @@ def display_analysis_results(result):
 
 if __name__ == "__main__":
     # Теперь просто указываем путь к исходному файлу из диктофона
-    input_audio = "data/samples/test1.m4a"
+    input_audio = "data/samples/victest3.m4a"
     
     if os.path.exists(input_audio):
         transcribe_audio(input_audio)
