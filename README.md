@@ -76,6 +76,7 @@ streamlit run app.py
 - `src/transcriber.py`: Главный скрипт (оркестратор) распознавания.
 - `src/audio_processor.py`: Модуль очистки и подготовки звука.
 - `src/ai_analyzer.py`: Логика анализа через Gemini AI.
+- `src/database.py`: База данных SQLite.
 - `data/samples/`: Папка для временного хранения аудио.
 
 
