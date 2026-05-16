@@ -51,6 +51,6 @@ if __name__ == "__main__":
     # 1. Сначала подготавливаем формат
     processed_path = prepare_audio(test_input)
     
-    # 2. (По желанию) Убираем тишину
+    # 2. Убираем тишину
     if processed_path:
         remove_silence(processed_path)

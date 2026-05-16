@@ -91,8 +91,8 @@ def display_analysis_results(result):
     print("="*50)
 
 if __name__ == "__main__":
-    # Теперь просто указываем путь к исходному файлу из диктофона
-    input_audio = "data/samples/victest3.m4a"
+    # Указываем путь к тестовому файлу
+    input_audio = "data/samples/test.m4a"
     
     if os.path.exists(input_audio):
         transcribe_audio(input_audio)
