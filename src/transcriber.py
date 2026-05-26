@@ -4,6 +4,22 @@ import os
 from src.audio_processor import prepare_audio, remove_silence
 from src.ai_analyzer import analyze_speech
 
+def clean_whisper_output(text):
+    """
+    Очищает текст от пустых строк и системных предупреждений whisper.cpp.
+    Вынесено в отдельную функцию для юнит-тестирования.
+    """
+    clean_lines = []
+    for line in text.split('\n'):
+        line_str = line.strip()
+        if (not line_str or 
+            "WARNING:" in line_str or 
+            "deprecated" in line_str or 
+            "whisper-cli" in line_str):
+            continue
+        clean_lines.append(line_str)
+    return "\n".join(clean_lines)
+
 def transcribe_audio(audio_path, language="ru"):
     """
     Полный цикл: подготовка аудио -> распознавание (Whisper) -> анализ (Gemini).
@@ -26,7 +42,6 @@ def transcribe_audio(audio_path, language="ru"):
     whisper_bin = "whisper-cli"
 
     # 3. Распознавание текста
-    # # -m: модель, -f: файл, --no-timestamps: убираем [00:00.000], чтобы был только текст
     print(f"📦 Распознавание речи через Whisper (язык: {language})...")
     command = [
         whisper_bin,
@@ -41,8 +56,8 @@ def transcribe_audio(audio_path, language="ru"):
         result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
         text = result.stdout.strip()
         
-        # Очистка технического мусора Whisper (иногда выводит пустые строки)
-        clean_text = "\n".join([line for line in text.split('\n') if line.strip()])
+        # 👇 ИСПОЛЬЗУЕМ НОВУЮ ФУНКЦИЮ ОЧИСТКИ
+        clean_text = clean_whisper_output(text)
         
         print("\n--- РАСШИФРОВАННЫЙ ТЕКСТ ---")
         print(clean_text)
@@ -50,7 +65,7 @@ def transcribe_audio(audio_path, language="ru"):
 
         # 4. ИИ-Анализ 
         if clean_text:
-            print("🧠 Отправляю текст на анализ в Gemini 3.1 Flash Lite Preview...")
+            print("🧠 Отправляю текст на анализ в Gemini 3.1 Flash Lite...")
             analysis = analyze_speech(clean_text)
             display_analysis_results(analysis)
         else:
