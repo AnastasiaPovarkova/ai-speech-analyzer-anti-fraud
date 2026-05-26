@@ -1,0 +1,42 @@
+name: CI Pipeline # Имя, которое будет отображаться во вкладке Actions на GitHub
+
+# 1. Триггеры: когда запускать робота?
+on:
+  push:
+    branches: [ "main" ] # Запускать при каждом пуше в ветку main
+  pull_request:
+    branches: [ "main" ] # И при создании пул-реквестов в main
+
+# 2. Список задач (Jobs), которые выполняются параллельно или последовательно
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # Берем самую свежую чистую Ubuntu в облаке GitHub
+
+    steps:
+    # Шаг 1: Скачиваем код репозитория на виртуальную машину
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Шаг 2: Разворачиваем Python нужной версии
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Версия Python, которая используется в проекте
+
+    # Шаг 3: Устанавливаем зависимости из requirements.txt и сам pytest
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    # Шаг 4: Запускаем наши тесты!
+    - name: Run tests with pytest
+      run: |
+        pytest
+
+    # Шаг 5: Проверяем, что наш Docker-образ собирается без ошибок
+    # Раз уж мы настроили CMake и Docker, робот должен гарантировать, что сборка не сломается
+    - name: Verify Docker build
+      run: |
+        docker build -t test-app-image .
