@@ -1,0 +1,26 @@
+Игнорируем виртуальное окружение Python
+
+venv/
+.venv/
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+Игнорируем локальные данные и базы данных (они монтируются через volumes)
+
+data/
+models/
+
+Игнорируем настройки IDE и Git
+
+.git/
+.gitignore
+.vscode/
+.idea/
+.env
+
+Игнорируем документацию и черновики
+
+TODO.md
+*.png

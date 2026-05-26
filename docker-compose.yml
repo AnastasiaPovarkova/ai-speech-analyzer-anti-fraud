@@ -1,0 +1,14 @@
+services:
+  speech-analyzer:
+    build: .
+    container_name: anti_fraud_analyzer
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      # Монтируем локальную папку data, чтобы сохранять базу данных и аудиозаписи на хосте
+      - ./data:/app/data
+      # Монтируем папку с моделями, чтобы не скачивать модель заново при каждом перезапуске
+      - ./models:/app/models
+    restart: always

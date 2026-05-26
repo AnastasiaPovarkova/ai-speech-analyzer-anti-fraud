@@ -1,6 +1,6 @@
 import subprocess
 import os
-import sys
+
 from src.audio_processor import prepare_audio, remove_silence
 from src.ai_analyzer import analyze_speech
 

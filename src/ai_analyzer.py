@@ -20,7 +20,7 @@ def analyze_speech(text):
         return {"error": "Текст слишком короткий для анализа"}
 
     # Техническое имя модели для API 3.1 Flash Lite
-    model_id = 'gemini-3.1-flash-lite-preview'
+    model_id = 'gemini-3.1-flash-lite'
     
     # Системные инструкции (Промпт)
     system_instruction = """
