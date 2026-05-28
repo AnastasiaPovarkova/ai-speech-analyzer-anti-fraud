@@ -12,6 +12,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest # Берем самую свежую чистую Ubuntu в облаке GitHub
 
+    # Убираем предупреждение от GitHub про Node.js 20 на будущее
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
     steps:
     # Шаг 1: Скачиваем код репозитория на виртуальную машину
     - name: Checkout repository
@@ -31,7 +35,10 @@ jobs:
         pip install pytest
 
     # Шаг 4: Запускаем наши тесты!
+    # Передаем фейковый ключ, чтобы импорт ai_analyzer не падал
     - name: Run tests with pytest
+      env:
+        GEMINI_API_KEY: "dummy_key_for_ci_testing_purposes"
       run: |
         pytest
 
